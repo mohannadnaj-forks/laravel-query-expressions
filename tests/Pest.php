@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Pest\Expectation;
 use PHPUnit\Framework\Assert;
 use Tpetry\QueryExpressions\Tests\TestCase;
@@ -11,17 +13,30 @@ uses(
     TestCase::class,
 )->in(__DIR__);
 
-expect()->extend('toBeExecutable', function (array $columns = [], array $options = []): Expectation {
+expect()->extend('toBeExecutable', function (
+    array $columns = [],
+    array $options = [],
+    Closure $callback = null
+): Expectation {
     /** @var \Illuminate\Database\Connection $connection */
     $connection = DB::connection();
 
     $table = null;
-    if (filled($columns)) {
+
+    if (filled($columns) | filled($callback)) {
         $table = 'example_'.mt_rand();
+    }
+
+    if (filled($columns)) {
         $columns = implode(',', $columns);
         $connection->unprepared("CREATE TABLE {$table} ({$columns})");
     }
 
+    if (filled($callback)) {
+        Schema::create($table, function (Blueprint $table) use ($callback) {
+            $callback($table);
+        });
+    }
     $position = $options[$connection->getDriverName()]['position'] ?? 'select';
 
     $expression = $this->value->getValue($connection->getQueryGrammar());
