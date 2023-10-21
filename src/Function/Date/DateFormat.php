@@ -90,8 +90,6 @@ class DateFormat implements Expression
                 'h' => '%H',
                 'i' => '%M',
                 's' => '%S',
-                // No format for AM/PM.
-                // 'A' => ''.
                 default => $char,
             },
             'pgsql' => match ($char) {
