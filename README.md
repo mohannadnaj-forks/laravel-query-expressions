@@ -340,6 +340,36 @@ Schema::table('users', function (Blueprint $table): void {
 });
 ```
 
+#### Date Format
+
+Use [PHP's date format](https://www.php.net/manual/en/datetime.format.php#refsect1-datetime.format-parameters) syntax to format a date column.
+
+> **Warning**
+>Not all databases support all PHP date format letters.
+
+```php
+use Tpetry\QueryExpressions\Function\Date\DateFormat;
+use Tpetry\QueryExpressions\Language\Alias;
+
+// MySQL:
+//  SELECT url, DATE_FORMAT(created_at, '%Y-%m-%d') AS date, [....]
+// PostgreSQL:
+//  SELECT url, TO_CHAR(created_at, 'YYYY-MM-DD') AS date, [....]
+BlogVisit::select([
+    'url',
+    new Alias(new DateFormat('created_at', 'Y-m-d'), 'date'),
+    new Count('*'),
+])->groupBy(
+    'url',
+    new DateFormat('created_at', 'Y-m-d')
+)->get();
+// | url       | date       | count |
+// |-----------|------------|-------|
+// | /example1 | 2023-05-16 | 2     |
+// | /example1 | 2023-05-17 | 1     |
+// | /example1 | 2023-05-18 | 1     |
+```
+
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
