@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Schema;
 use Tpetry\QueryExpressions\Function\Date\DateFormat;
 
 it('can format dates', function () {
+
     if (
         DB::connection()->getDriverName() === 'mysql'
     ) {
@@ -39,6 +40,7 @@ it('can format dates', function () {
             'W' => '53',
             'Y' => '2021',
             'y' => '21',
+            '\yy\\' => 'y21\\',
         ],
         '2021-12-09 19:02:37' => [
             'a' => 'pm',
