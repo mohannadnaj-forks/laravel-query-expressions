@@ -447,15 +447,43 @@ trait EmulatedDateFormatTrait
         };
     }
 
-    protected function getEmulatableCharacterForPgsql(string $character): ?string
+    protected function getEmulatableCharacterForPgsql(string $character): string|Expression|null
     {
         return match ($character) {
-            'a' => '(CASE WHEN EXTRACT(HOUR FROM %s)::INTEGER < 12 THEN \'am\' ELSE \'pm\' END)',
+            'a' => new CaseGroup(
+                when: [
+                    new CaseRule(
+                        result: new Value('am'),
+                        condition: new LessThan(
+                            new QueryExpression('EXTRACT(HOUR FROM %s)::INTEGER'),
+                            new Value('12'),
+                        ),
+                    ),
+                ],
+                else: new Value('pm'),
+            ),
             'F' => 'TRIM(TO_CHAR(%s, \'Month\'))',
             'g' => '(EXTRACT(HOUR FROM %s)::INTEGER %% 12)',
             'G' => 'CAST(EXTRACT(HOUR FROM %s)::INTEGER AS VARCHAR(2))',
             'l' => 'TRIM(TO_CHAR(%s, \'Day\'))',
-            'o' => '(CASE WHEN EXTRACT(MONTH FROM %s)::INTEGER = 1 AND EXTRACT(DAY FROM %s)::INTEGER <= 3 THEN EXTRACT(YEAR FROM %s)::INTEGER - 1 ELSE EXTRACT(YEAR FROM %s)::INTEGER END)',
+            'o' => new CaseGroup(
+                when: [
+                    new CaseRule(
+                        result: new QueryExpression('EXTRACT(YEAR FROM %s)::INTEGER - 1'),
+                        condition: new CondAnd(
+                            new Equal(
+                                new QueryExpression('EXTRACT(MONTH FROM %s)::INTEGER'),
+                                new Value('1'),
+                            ),
+                            new LessThanOrEqual(
+                                new QueryExpression('EXTRACT(DAY FROM %s)::INTEGER'),
+                                new Value('3'),
+                            ),
+                        ),
+                    ),
+                ],
+                else: new QueryExpression('EXTRACT(YEAR FROM %s)::INTEGER'),
+            ),
             't' => 'EXTRACT(DAY FROM DATE_TRUNC(\'month\', %s) + INTERVAL \'1 month - 1 day\')::INTEGER',
             'U' => 'EXTRACT(EPOCH FROM %s)::INTEGER',
             'w' => 'EXTRACT(DOW FROM %s)::INTEGER',
@@ -463,16 +491,16 @@ trait EmulatedDateFormatTrait
         };
     }
 
-    protected function getEmulatableCharacterForSqlsrv(string $character): ?string
+    protected function getEmulatableCharacterForSqlsrv(string $character): string|Expression|null
     {
         return match ($character) {
-            'a' => '(CASE WHEN FORMAT(%s, \'tt\') = \'am\' THEN \'am\' ELSE \'pm\' END)',
-            'F' => '(CASE WHEN MONTH(%s) = 1 THEN \'January\' WHEN MONTH(%s) = 2 THEN \'February\' WHEN MONTH(%s) = 3 THEN \'March\' WHEN MONTH(%s) = 4 THEN \'April\' WHEN MONTH(%s) = 5 THEN \'May\' WHEN MONTH(%s) = 6 THEN \'June\' WHEN MONTH(%s) = 7 THEN \'July\' WHEN MONTH(%s) = 8 THEN \'August\' WHEN MONTH(%s) = 9 THEN \'September\' WHEN MONTH(%s) = 10 THEN \'October\' WHEN MONTH(%s) = 11 THEN \'November\' WHEN MONTH(%s) = 12 THEN \'December\' END)',
+            'a' => 'LOWER(FORMAT(%s, \'tt\'))',
+            'F' => 'DATENAME(MONTH, %s)',
             'g' => '(CAST(DATEPART(HOUR, %s) AS VARCHAR(2)) %% 12)',
             'G' => 'CAST(DATEPART(HOUR, %s) AS VARCHAR(2))',
             'j' => 'CAST(DAY(%s) AS VARCHAR(2))',
-            'l' => '(CASE WHEN DATEPART(WEEKDAY, %s) = 1 THEN \'Sunday\' WHEN DATEPART(WEEKDAY, %s) = 2 THEN \'Monday\' WHEN DATEPART(WEEKDAY, %s) = 3 THEN \'Tuesday\' WHEN DATEPART(WEEKDAY, %s) = 4 THEN \'Wednesday\' WHEN DATEPART(WEEKDAY, %s) = 5 THEN \'Thursday\' WHEN DATEPART(WEEKDAY, %s) = 6 THEN \'Friday\' WHEN DATEPART(WEEKDAY, %s) = 7 THEN \'Saturday\' END)',
-            'M' => '(CASE WHEN MONTH(%s) = 1 THEN \'Jan\' WHEN MONTH(%s) = 2 THEN \'Feb\' WHEN MONTH(%s) = 3 THEN \'Mar\' WHEN MONTH(%s) = 4 THEN \'Apr\' WHEN MONTH(%s) = 5 THEN \'May\' WHEN MONTH(%s) = 6 THEN \'Jun\' WHEN MONTH(%s) = 7 THEN \'Jul\' WHEN MONTH(%s) = 8 THEN \'Aug\' WHEN MONTH(%s) = 9 THEN \'Sep\' WHEN MONTH(%s) = 10 THEN \'Oct\' WHEN MONTH(%s) = 11 THEN \'Nov\' WHEN MONTH(%s) = 12 THEN \'Dec\' END)',
+            'l' => 'DATENAME(WEEKDAY, %s)',
+            'M' => 'LEFT(DATENAME(MONTH, %s), 3)',
             'n' => 'CAST(MONTH(%s) AS VARCHAR(2))',
             'o' => '(CASE WHEN MONTH(%s) = 1 AND DAY(%s) <= 3 THEN YEAR(%s) - 1 ELSE YEAR(%s) END)',
             't' => 'CAST(DAY(EOMONTH(%s)) AS VARCHAR(2))',
