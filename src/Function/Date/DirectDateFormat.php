@@ -40,7 +40,6 @@ trait DirectDateFormat
             'y' => '%y',
         ],
         'sqlite' => [
-            'A' => '%p',
             'd' => '%d',
             'H' => '%H',
             'i' => '%M',

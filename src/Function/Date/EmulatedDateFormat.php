@@ -92,10 +92,16 @@ trait EmulatedDateFormat
 
         return match ($character) {
             'a' => '(CASE WHEN CAST(STRFTIME(\'%%H\', %s) AS INTEGER) < 12 '
-            . sprintf(
+            .sprintf(
                 'THEN \'%s\' ELSE \'%s\' END)',
                 Carbon::now()->hour(0)->meridiem(true),
                 Carbon::now()->hour(12)->meridiem(true)
+            ),
+            'A' => '(CASE WHEN CAST(STRFTIME(\'%%H\', %s) AS INTEGER) < 12 '
+            .sprintf(
+                'THEN \'%s\' ELSE \'%s\' END)',
+                Carbon::now()->hour(0)->meridiem(false),
+                Carbon::now()->hour(12)->meridiem(false)
             ),
             'D' => sprintf(
                 '(CASE %s END)',
