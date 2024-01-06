@@ -91,7 +91,12 @@ trait EmulatedDateFormat
         );
 
         return match ($character) {
-            'a' => 'LOWER(STRFTIME(\'%%p\', %s))',
+            'a' => '(CASE WHEN CAST(STRFTIME(\'%%H\', %s) AS INTEGER) < 12 '
+            . sprintf(
+                'THEN \'%s\' ELSE \'%s\' END)',
+                Carbon::now()->hour(0)->meridiem(true),
+                Carbon::now()->hour(12)->meridiem(true)
+            ),
             'D' => sprintf(
                 '(CASE %s END)',
                 implode(
