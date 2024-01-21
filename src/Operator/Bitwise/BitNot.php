@@ -23,4 +23,9 @@ class BitNot implements Expression
 
         return "(~{$value})";
     }
+
+    public static function from(string|Expression $value): self
+    {
+        return new self($value);
+    }
 }

@@ -30,4 +30,9 @@ class SumFilter implements Expression
             'pgsql', 'sqlite' => "sum({$value}) filter (where {$filter})",
         };
     }
+
+    public static function from(string|Expression $value, Expression $filter): self
+    {
+        return new self($value, $filter);
+    }
 }

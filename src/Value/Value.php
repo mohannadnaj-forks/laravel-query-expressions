@@ -19,4 +19,9 @@ class Value implements Expression
     {
         return $grammar->escape($this->value, $this->binary);
     }
+
+    public static function from(string|int|float|bool|null $value, bool $binary = false): self
+    {
+        return new self($value, $binary);
+    }
 }

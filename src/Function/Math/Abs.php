@@ -28,4 +28,9 @@ class Abs implements Expression
             'pgsql', 'sqlsrv' => "abs({$expression})",
         };
     }
+
+    public static function from(string|Expression $expression): self
+    {
+        return new self($expression);
+    }
 }

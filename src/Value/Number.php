@@ -18,4 +18,9 @@ class Number implements Expression
     {
         return (string) $this->value;
     }
+
+    public static function from(int|float $value): self
+    {
+        return new self($value);
+    }
 }

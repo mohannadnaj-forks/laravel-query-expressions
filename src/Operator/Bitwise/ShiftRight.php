@@ -32,4 +32,9 @@ class ShiftRight implements Expression
             'pgsql', 'sqlite' => "({$value} >> {$times})",
         };
     }
+
+    public static function from(string|Expression $value, string|Expression $times): self
+    {
+        return new self($value, $times);
+    }
 }

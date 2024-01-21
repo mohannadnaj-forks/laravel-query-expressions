@@ -27,4 +27,9 @@ class Count implements Expression
             false => "count({$value})",
         };
     }
+
+    public static function from(string|Expression $value, bool $distinct = false): self
+    {
+        return new self($value, $distinct);
+    }
 }

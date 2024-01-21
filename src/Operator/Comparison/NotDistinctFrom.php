@@ -34,4 +34,9 @@ class NotDistinctFrom implements ConditionExpression
             'sqlsrv' => "({$value1} = {$value2} or ({$value1} is null and {$value2} is null))",
         };
     }
+
+    public static function from(string|Expression $value1, string|Expression $value2): self
+    {
+        return new self($value1, $value2);
+    }
 }
