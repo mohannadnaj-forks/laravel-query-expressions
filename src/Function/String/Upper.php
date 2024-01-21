@@ -28,4 +28,9 @@ class Upper implements Expression
             'pgsql', 'sqlsrv' => "upper({$expression})",
         };
     }
+
+    public static function from(string|Expression $expression): self
+    {
+        return new self($expression);
+    }
 }

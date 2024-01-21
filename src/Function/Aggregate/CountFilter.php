@@ -29,4 +29,9 @@ class CountFilter implements Expression
             'sqlsrv' => "sum(case when {$filter} then 1 else 0 end)",
         };
     }
+
+    public static function from(Expression $filter): self
+    {
+        return new self($filter);
+    }
 }

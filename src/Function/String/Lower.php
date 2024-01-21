@@ -28,4 +28,9 @@ class Lower implements Expression
             'pgsql', 'sqlsrv' => "lower({$expression})",
         };
     }
+
+    public static function from(string|Expression $expression): self
+    {
+        return new self($expression);
+    }
 }

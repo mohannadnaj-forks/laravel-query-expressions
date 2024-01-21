@@ -31,4 +31,9 @@ class Alias implements Expression
 
         return "{$expression} as {$name}";
     }
+
+    public static function from(string|Expression $expression, string $name): self
+    {
+        return new self($expression, $name);
+    }
 }

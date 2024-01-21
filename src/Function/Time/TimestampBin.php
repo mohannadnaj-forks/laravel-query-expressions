@@ -46,4 +46,9 @@ class TimestampBin implements Expression
             'sqlsrv' => "dateadd(s,(datediff(s,'1970-01-01',{$expression})-{$origin})/{$step}*{$step}+{$origin},'1970-01-01')",
         };
     }
+
+    public static function from(string|Expression $expression, DateInterval $step, ?DateTimeInterface $origin = null): self
+    {
+        return new self($expression, $step, $origin);
+    }
 }

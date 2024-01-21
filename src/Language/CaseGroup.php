@@ -36,4 +36,12 @@ class CaseGroup implements Expression
             default => "(case {$conditions} else {$this->stringize($grammar, $this->else)} end)",
         };
     }
+
+    /**
+     * @param  non-empty-array<int, CaseRule>  $when
+     */
+    public static function from(array $when, string|Expression|null $else = null): self
+    {
+        return new self($when, $else);
+    }
 }

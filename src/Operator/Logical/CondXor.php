@@ -32,4 +32,9 @@ class CondXor implements ConditionExpression
             'pgsql', 'sqlite', 'sqlsrv' => "(({$value1} and not {$value2}) or (not {$value1} and {$value2}))",
         };
     }
+
+    public static function from(Expression $value1, Expression $value2): self
+    {
+        return new self($value1, $value2);
+    }
 }

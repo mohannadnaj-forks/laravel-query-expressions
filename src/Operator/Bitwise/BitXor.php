@@ -31,4 +31,9 @@ class BitXor implements Expression
             'sqlite' => "(({$value1} | {$value2}) - ({$value1} & {$value2}))",
         };
     }
+
+    public static function from(string|Expression $value1, string|Expression $value2): self
+    {
+        return new self($value1, $value2);
+    }
 }

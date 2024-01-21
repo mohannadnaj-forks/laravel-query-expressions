@@ -33,4 +33,9 @@ class StrListContains implements ConditionExpression
             'sqlsrv' => "({$strList} like {$str} or {$strList} like concat({$str},',%') or {$strList} like concat('%,',{$str},',%') or {$strList} like concat('%,',{$str}))",
         };
     }
+
+    public static function from(string|Expression $strList, string|Expression $str): self
+    {
+        return new self($strList, $str);
+    }
 }

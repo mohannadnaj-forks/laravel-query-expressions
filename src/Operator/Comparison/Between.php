@@ -29,4 +29,9 @@ class Between implements ConditionExpression
 
         return "({$value} between {$min} and {$max})";
     }
+
+    public static function from(string|Expression $value, string|Expression $min, string|Expression $max): self
+    {
+        return new self($value, $min, $max);
+    }
 }

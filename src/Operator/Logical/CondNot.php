@@ -24,4 +24,9 @@ class CondNot implements ConditionExpression
 
         return "(not {$value})";
     }
+
+    public static function from(Expression $value): self
+    {
+        return new self($value);
+    }
 }

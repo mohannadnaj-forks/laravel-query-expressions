@@ -26,4 +26,9 @@ class CaseRule implements Expression
 
         return "when {$condition} then {$result}";
     }
+
+    public static function from(string|Expression $result, ConditionExpression $condition): self
+    {
+        return new self($result, $condition);
+    }
 }
